@@ -1,4 +1,4 @@
-pub const INIT_MISSING_COMMAND: &str = "
+pub const USAGE_MESSAGE: &str = "
 Usage: nra <command> [args]
 
 Commands:
