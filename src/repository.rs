@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::constant::message::{ INIT_SUCCESS, INIT_SUCCESS_EXIST };
-use crate::constant::path::{ VCS_DIR, VCS_OBJECTS_DIR, VCS_REFS_HEADS_DIR, VCS_HEAD_FILE };
+use crate::constant::path::{ VCS_DIR, VCS_OBJECTS_DIR, VCS_REFS_CURRENTS_DIR, VCS_CURRENT_FILE };
 
 
 pub fn init_repository() -> std::io::Result<()> {
@@ -14,8 +14,8 @@ pub fn init_repository() -> std::io::Result<()> {
     };
 
     fs::create_dir_all(VCS_OBJECTS_DIR)?;
-    fs::create_dir_all(VCS_REFS_HEADS_DIR)?;
-    fs::write(VCS_HEAD_FILE, "ref: refs/heads/main\n")?;
+    fs::create_dir_all(VCS_REFS_CURRENTS_DIR)?;
+    fs::write(VCS_CURRENT_FILE, "ref: refs/currents/main\n")?;
 
     println!("{}", message);
     Ok(())
