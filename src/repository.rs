@@ -15,7 +15,7 @@ pub fn init_repository() -> std::io::Result<()> {
 
     fs::create_dir_all(VCS_OBJECTS_DIR)?;
     fs::create_dir_all(VCS_REFS_CURRENTS_DIR)?;
-    fs::write(VCS_CURRENT_FILE, "ref: refs/heads/main\n")?;
+    fs::write(VCS_CURRENT_FILE, "ref: refs/currents/main\n")?;
 
     println!("{}", message);
     Ok(())
