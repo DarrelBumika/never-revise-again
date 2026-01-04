@@ -8,9 +8,9 @@ use crate::constant::system::DEFAULT_IGNORED_PATHS;
 use crate::constant::path::VCS_INDEX_FILE;
 
 pub fn get_status() -> Result<()> {
-    let index = get_indexed_entries();
+    let index = &get_indexed_entries();
     let ignored_by_default = DEFAULT_IGNORED_PATHS;
-    let ignored_by_user = Vec::new();
+    let ignored_by_user = &Vec::new();
 
     if !index.is_empty() {
         println!("Ready to save:");
@@ -45,15 +45,15 @@ fn get_indexed_entries() -> Vec<String> {
     let reader = BufReader::new(index);
     reader
         .lines()
-        .map(|line: Result<String>| line.unwrap())
+        .filter_map(|line: Result<String>| line.ok())
         .collect()
 }
 
 fn get_entries(
     path: &Path,
-    index: Vec<String>,
+    index: &Vec<String>,
     ignored_by_default: &[&str],
-    ignored_by_user: Vec<String>
+    ignored_by_user: &Vec<String>
 ) -> Vec<String> {
     let Ok(entries) = read_dir(path) else {
         return Vec::new();
@@ -94,9 +94,9 @@ fn get_entries(
             if entry_path.is_dir() {
                 entries.append(&mut get_entries(
                     &entry_path,
-                    index.clone(),
-                    ignored_by_default,
-                    ignored_by_user.clone()
+                    &index,
+                    &ignored_by_default,
+                    &ignored_by_user
                 ));
             }
             entries
