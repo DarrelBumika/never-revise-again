@@ -9,20 +9,12 @@ pub fn init() {
 }
 
 pub fn status() {
-    if let Ok(()) = check_nra_repository() {
+    if let Err(err) = is_initialized() {
+        println!("{}", err);
+        println!("(use \"nra init\" to initialize NRA repository)");
+    } else {
         if let Err(e) = status::get_status() {
             eprintln!("Failed to get status: {}", e);
         }
     }
-}
-
-pub fn check_nra_repository() -> Result<(), ()> {
-    if !is_initialized() {
-        println!("Not a NRA repository");
-        println!("(use \"nra init\" to initialize NRA repository)");
-
-        return Err(())
-    }
-
-    Ok(())
 }
