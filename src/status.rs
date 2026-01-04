@@ -22,17 +22,25 @@ pub fn get_status() -> Result<()> {
             });
     }
 
-    println!("Changed files:");
-    println!("(use \"nra add <file>...\" to make it ready to save)");
-    get_entries(
+    let changed_entries = get_changed_entries(
         Path::new("."),
         index,
         ignored_by_default,
         ignored_by_user,
-    ).iter()
-        .for_each(|entry| {
-            println!("    {}", entry.red());
-        });
+    );
+
+    if !changed_entries.is_empty() {
+        println!("Changed files:");
+        println!("(use \"nra add <file>...\" to make it ready to save)");
+
+        changed_entries
+            .iter()
+            .for_each(|entry| {
+                println!("    {}", entry.red());
+            });
+    } else {
+        println!("No changed files");
+    }
 
     Ok(())
 }
@@ -49,7 +57,7 @@ fn get_indexed_entries() -> Vec<String> {
         .collect()
 }
 
-fn get_entries(
+fn get_changed_entries(
     path: &Path,
     index: &Vec<String>,
     ignored_by_default: &[&str],
@@ -92,7 +100,7 @@ fn get_entries(
         .flat_map(|entry_path: PathBuf| {
             let mut entries = vec![entry_path.to_string_lossy().to_string()];
             if entry_path.is_dir() {
-                entries.append(&mut get_entries(
+                entries.append(&mut get_changed_entries(
                     &entry_path,
                     &index,
                     &ignored_by_default,
