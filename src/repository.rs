@@ -7,7 +7,7 @@ use crate::constant::path::{ VCS_DIR, VCS_OBJECTS_DIR, VCS_REFS_CURRENTS_DIR, VC
 
 pub fn init_repository() -> std::io::Result<()> {
 
-    let message: &str = if is_initialized() {
+    let message: &str = if let Ok(()) = is_initialized() {
         INIT_SUCCESS_EXIST
     } else {
         INIT_SUCCESS
@@ -21,6 +21,10 @@ pub fn init_repository() -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn is_initialized() -> bool {
-    Path::new(VCS_DIR).exists()
+pub fn is_initialized() -> Result<(), String> {
+    if Path::new(VCS_DIR).exists() {
+        Ok(())
+    } else {
+        Err(String::from("Not a NRA repository"))
+    }
 }
