@@ -2,6 +2,7 @@ mod commands;
 mod repository;
 mod object;
 pub mod constant;
+mod status;
 
 use crate::constant::message::USAGE_MESSAGE;
 
@@ -16,6 +17,7 @@ fn main() {
     match args[1].as_str() {
         "init" => commands::init(),
         "add" => commands::add(&args[2..]),
+        "status" => commands::status(),
         _ => eprintln!("{}", USAGE_MESSAGE)
     }
 }
