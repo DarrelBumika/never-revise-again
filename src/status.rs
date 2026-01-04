@@ -9,8 +9,11 @@ use crate::constant::path::VCS_INDEX_FILE;
 
 pub fn get_status() -> Result<()> {
     let index = &get_indexed_entries();
-    let ignored_by_default = DEFAULT_IGNORED_PATHS;
-    let ignored_by_user = &Vec::new();
+    let ignored_by_default = &DEFAULT_IGNORED_PATHS
+        .iter()
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+    let ignored_by_user = &Vec::new(); // TODO Use this from .nraignore
 
     if !index.is_empty() {
         println!("Ready to save:");
@@ -57,10 +60,17 @@ fn get_indexed_entries() -> Vec<String> {
         .collect()
 }
 
+fn is_contain(path: &PathBuf, collection: &Vec<String>) -> bool {
+    let path_str = path.to_string_lossy();
+    let path_str = path_str.as_ref();
+
+    !collection.iter().any(|i| i == path_str)
+}
+
 fn get_changed_entries(
     path: &Path,
     index: &Vec<String>,
-    ignored_by_default: &[&str],
+    ignored_by_default: &Vec<String>,
     ignored_by_user: &Vec<String>
 ) -> Vec<String> {
     let Ok(entries) = read_dir(path) else {
@@ -73,41 +83,29 @@ fn get_changed_entries(
         // Map DirEntry to PathBuf
         .map(|entry: DirEntry| entry.path())
         // Filter index
-        .filter(|path: &PathBuf|
-            !index.contains(
-                &path
-                    .to_string_lossy()
-                    .to_string()
-            )
-        )
+        .filter(|path: &PathBuf| {
+            is_contain(path, index)
+        })
         // Filter ignored by default
         .filter(|path: &PathBuf| {
-            !ignored_by_default.contains(
-                &path
-                    .to_string_lossy()
-                    .as_ref()
-            )
+            is_contain(path, ignored_by_default)
         })
         // Filter ignored by user
         .filter(|path: &PathBuf| {
-            !ignored_by_user.contains(
-                &path
-                    .to_string_lossy()
-                    .to_string()
-            )
+            is_contain(path, ignored_by_user)
         })
         // Collect entries and recurse into directories
         .flat_map(|entry_path: PathBuf| {
-            let mut entries = vec![entry_path.to_string_lossy().to_string()];
             if entry_path.is_dir() {
-                entries.append(&mut get_changed_entries(
+                get_changed_entries(
                     &entry_path,
                     &index,
                     &ignored_by_default,
                     &ignored_by_user
-                ));
+                )
+            } else {
+                vec![entry_path.to_string_lossy().to_string()]
             }
-            entries
         })
         .collect()
 }
