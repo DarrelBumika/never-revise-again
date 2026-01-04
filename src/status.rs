@@ -60,9 +60,9 @@ fn get_entries(
     };
 
     entries
-        // Filter entry by status
+        // Ignore entries with I/O errors and convert Result<DirEntry> to Option<DirEntry>
         .filter_map(|entry: Result<DirEntry>| entry.ok())
-        // Mapping entry to DirEntry
+        // Map DirEntry to PathBuf
         .map(|entry: DirEntry| entry.path())
         // Filter index
         .filter(|path: &PathBuf|
