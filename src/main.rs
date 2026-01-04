@@ -16,6 +16,7 @@ fn main() {
 
     match args[1].as_str() {
         "init" => commands::init(),
+        "add" => commands::add(&args[2..]),
         "status" => commands::status(),
         _ => eprintln!("{}", USAGE_MESSAGE)
     }

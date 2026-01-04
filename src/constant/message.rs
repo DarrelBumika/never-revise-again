@@ -3,6 +3,8 @@ Usage: nra <command> [args]
 
 Commands:
     init    Create an empty NRA repository
+    add     Make changed files ready to save
+    save    Save changed files
     status  Show current repository status
 ";
 
