@@ -1,23 +1,28 @@
-mod commands;
-mod repository;
-mod object;
-pub mod constant;
-mod status;
+mod constants;
+mod handlers;
+mod core;
+mod entities;
+mod utils;
 
-use crate::constant::message::USAGE_MESSAGE;
+use clap::Parser;
+
+use handlers::repository_handler;
+use utils::message_builder;
+use entities::cli::{
+    Cli,
+    Commands
+};
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-
-    if args.len() < 2 {
-        eprintln!("{}", USAGE_MESSAGE);
-        return;
-    }
-
-    match args[1].as_str() {
-        "init" => commands::init(),
-        "add" => commands::add(&args[2..]),
-        "status" => commands::status(),
-        _ => eprintln!("{}", USAGE_MESSAGE)
+    match Cli::try_parse() {
+        Ok(cli) => {
+            match cli.command {
+                Some(Commands::Start) => repository_handler::start(),
+                None => message_builder::missing_commands()
+            }
+        }
+        Err(_) => {
+            message_builder::invalid_commands()
+        }
     }
 }

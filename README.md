@@ -1,5 +1,5 @@
 # Never Revise Again!
 
-Custom version control system build using Rust
+GIT version control wrapper with simple commands and beginner-friendly features.
 
 ---
